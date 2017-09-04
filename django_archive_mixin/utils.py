@@ -48,7 +48,7 @@ def cascade_archive(inst_or_qs, using, keep_parents=False):
         collector.collect(instances, keep_parents=keep_parents)
     collector.sort()
 
-    for model, instances in collector.data.iteritems():
+    for model, instances in collector.data.items():
         # remove archive mixin models from the delete list and put
         # them in the update list.  If we do this, we can just call
         # the collector.delete method.
