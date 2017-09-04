@@ -25,7 +25,11 @@ class ArchiveQuerySet(models.query.QuerySet):
         collector = cascade_archive(self.all(), self.db)
         self._result_cache = None
         return collector.delete()
+    
     delete.alters_data = True
+
+    def unavailable(self):
+        return self.filter(deleted_on__isnull=False)
 
     def available(self):
         return self.filter(deleted_on__isnull=True)
@@ -45,6 +49,10 @@ class ArchiveManager(models.Manager):
         """
         return ArchiveQuerySet(self.model, using=self._db).available()
 
+    @property
+    def deleted(self):
+        return ArchiveQuerySet(self.model, using=self._db).unavailable()   
+    
     @property
     def deleted_qs(self):
         """
