@@ -9,7 +9,7 @@ Archive/soft delete Django models.
 
 setup(
     name="django-archive-mixin",
-    version="0.1.1",
+    version="0.1.2",
     url="https://github.com/LucasRoesler/django-archive-mixin",
     license="MIT",
     platforms=["OS Independent"],
