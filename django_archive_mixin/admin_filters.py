@@ -1,5 +1,10 @@
 from django.contrib.admin import SimpleListFilter
+from django_archive_mixin.mixins import ArchiveMixin
 
+def really_delete(modeladmin, request, queryset):
+    for q in queryset.all():
+        if not isinstance(q, ArchiveMixin): continue
+        q.really_delete()
 
 def get_ArchivedFilter(for_class):
     
