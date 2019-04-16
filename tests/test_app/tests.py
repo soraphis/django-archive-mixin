@@ -38,13 +38,13 @@ class ArchiveMixinTestCase(TestCase):
         self.assertTrue(models.RelatedArchiveModel.all_objects.exists())
         related_archivable = models.RelatedArchiveModel.all_objects.get(
             pk=related_archivable.pk)
-        self.assertIsNotNone(related_archivable.deleted_on)
+        self.assertIsNotNone(related_archivable.deleted)
 
         self.assertFalse(models.RelatedCousinArchiveModel.objects.exists())
         self.assertTrue(models.RelatedCousinArchiveModel.all_objects.exists())
         cousin_archivable = models.RelatedCousinArchiveModel.all_objects.get(
             pk=cousin_archivable.pk)
-        self.assertIsNotNone(cousin_archivable.deleted_on)
+        self.assertIsNotNone(cousin_archivable.deleted)
 
     def test_cascade_delete_qs(self):
         """

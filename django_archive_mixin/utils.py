@@ -48,16 +48,16 @@ def cascade_archive(inst_or_qs, using, keep_parents=False):
         collector.collect(instances, keep_parents=keep_parents)
     collector.sort()
 
-    for model, instances in collector.data.items():
+    for model, instances in list(collector.data.items()):
         # remove archive mixin models from the delete list and put
         # them in the update list.  If we do this, we can just call
         # the collector.delete method.
         inst_list = list(instances)
 
         if issubclass(model, ArchiveMixin):
-            deleted_on_field = get_field_by_name(model, 'deleted_on')
+            deleted_field = get_field_by_name(model, 'deleted')
             collector.add_field_update(
-                deleted_on_field, deleted_ts, inst_list)
+                deleted_field, deleted_ts, inst_list)
 
             del collector.data[model]
 
@@ -67,8 +67,8 @@ def cascade_archive(inst_or_qs, using, keep_parents=False):
         model = qs.model
 
         if issubclass(model, ArchiveMixin):
-            deleted_on_field = get_field_by_name(model, 'deleted_on')
-            collector.add_field_update(deleted_on_field, deleted_ts, qs)
+            deleted_field = get_field_by_name(model, 'deleted')
+            collector.add_field_update(deleted_field, deleted_ts, qs)
 
             collector.fast_deletes[i] = qs.none()
 

@@ -11,7 +11,7 @@ class ArchiveQuerySet(models.query.QuerySet):
     def delete(self):
         # doing an update is the most efficient, but does not promise
         # that the cascade will happen. E.g.
-        # return self.update(deleted_on=timezone.now())
+        # return self.update(deleted=timezone.now())
 
         # from django source
         # https://github.com/django/django/blob/1.8.6/django/db/models/query.py
@@ -29,10 +29,10 @@ class ArchiveQuerySet(models.query.QuerySet):
     delete.alters_data = True
 
     def unavailable(self):
-        return self.filter(deleted_on__isnull=False)
+        return self.filter(deleted__isnull=False)
 
     def available(self):
-        return self.filter(deleted_on__isnull=True)
+        return self.filter(deleted__isnull=True)
 
 
 class ArchiveManager(models.Manager):
