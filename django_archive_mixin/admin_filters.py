@@ -1,4 +1,5 @@
 from django.contrib.admin import SimpleListFilter
+
 from django_archive_mixin.mixins import ArchiveMixin
 
 

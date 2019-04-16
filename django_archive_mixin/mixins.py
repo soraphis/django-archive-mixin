@@ -3,7 +3,8 @@ from django.db import router
 from django.db.models import signals
 
 from . import managers
-from .utils import cascade_archive
+from .utils import cascade_archive, cascade_unarchive
+from .signals import post_undelete, post_softdelete, pre_softdelete
 
 
 class ArchiveMixin(models.Model):
@@ -59,11 +60,15 @@ class ArchiveMixin(models.Model):
         # Start delete, send the pre-delete signal.
         signals.pre_delete.send(
             sender=self.__class__, instance=self, using=using)
+        pre_softdelete.send(
+            sender=self.__class__, instance=self, using=using)
 
         collector = cascade_archive(self, using, keep_parents)
         resp = collector.delete()
         # End delete, send the post-delete signal
         signals.post_delete.send(
+            sender=self.__class__, instance=self, using=using)
+        post_softdelete.send(
             sender=self.__class__, instance=self, using=using)
 
         return resp
@@ -76,3 +81,20 @@ class ArchiveMixin(models.Model):
         """
         super(ArchiveMixin, self).delete(using=using)
 
+    def undelete(self, using=None, keep_parents=False):
+        using = using or router.db_for_write(self.__class__, instance=self)
+
+        assert self._get_pk_val() is not None, \
+            "%s object can't be undeleted because its %s attribute " \
+            "is set to None." % (self._meta.object_name, self._meta.pk.attname)
+
+        assert self.deleted is not None, \
+            "%s object can't be undeleted because it is not deleted." % (self._meta.object_name)
+
+        collector = cascade_unarchive(self, using, self.deleted, keep_parents)
+        resp = collector.delete()
+        # End undelete, send the post-undelete signal
+        post_undelete.send(
+            sender=self.__class__, instance=self, using=using)
+
+        return resp
