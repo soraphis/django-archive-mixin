@@ -22,8 +22,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '^e_&(g0ml7nv(!*hs&eg#2fwb&npugs9l6o-#14$%s6hjwie(b'
 FIELD_ENCRYPTION_KEY = [
-    bytes('4MC8zC3jFPdjZm5Mf_2nyi44K8HChtaEoMv8nV6CNMo='),
-    bytes('293xHgWwVwu1CrXTc-i1n5olreSGelFAxsbYcfWl-0k='),
+    bytes('4MC8zC3jFPdjZm5Mf_2nyi44K8HChtaEoMv8nV6CNMo=',"utf-8"),
+    bytes('293xHgWwVwu1CrXTc-i1n5olreSGelFAxsbYcfWl-0k=',"utf-8"),
 ]
 
 PGJSON_ENCODER_CLASS = "django.core.serializers.json.DjangoJSONEncoder"
@@ -37,6 +37,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -45,14 +46,14 @@ INSTALLED_APPS = (
     'test_app',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
 )
 
-ROOT_URLCONF = 'tests.urls'
+ROOT_URLCONF = 'tests_project.urls'
 
 TEMPLATES = [
     {
@@ -78,12 +79,12 @@ WSGI_APPLICATION = 'tests.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'test',
-        'USER': 'test',
-        'PASSWORD': 'test',
-        'HOST': 'localhost',
-        'PORT': '',
+        'USER': 'vinicius',
+        #'PASSWORD': 'test',
+        #'HOST': 'localhost',
+        #'PORT': '',
     }
 }
 

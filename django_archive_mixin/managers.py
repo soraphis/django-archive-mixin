@@ -8,10 +8,11 @@ class ArchiveQuerySet(models.query.QuerySet):
     QuerySet whose delete() does not delete items, but instead marks the
     rows as not active, and updates the timestamps
     """
+
     def delete(self):
         # doing an update is the most efficient, but does not promise
         # that the cascade will happen. E.g.
-        # return self.update(deleted_on=timezone.now())
+        # return self.update(deleted=timezone.now())
 
         # from django source
         # https://github.com/django/django/blob/1.8.6/django/db/models/query.py
@@ -25,14 +26,14 @@ class ArchiveQuerySet(models.query.QuerySet):
         collector = cascade_archive(self.all(), self.db)
         self._result_cache = None
         return collector.delete()
-    
+
     delete.alters_data = True
 
     def unavailable(self):
-        return self.filter(deleted_on__isnull=False)
+        return self.filter(deleted__isnull=False)
 
     def available(self):
-        return self.filter(deleted_on__isnull=True)
+        return self.filter(deleted__isnull=True)
 
 
 class ArchiveManager(models.Manager):
@@ -43,6 +44,7 @@ class ArchiveManager(models.Manager):
     A queryset with all objects, including any deleted objects, is available
     via the `deleted_qs` property.
     """
+
     def get_queryset(self):
         """
         Return a queryset without any deleted instances.
@@ -51,8 +53,8 @@ class ArchiveManager(models.Manager):
 
     @property
     def deleted(self):
-        return ArchiveQuerySet(self.model, using=self._db).unavailable()   
-    
+        return ArchiveQuerySet(self.model, using=self._db).unavailable()
+
     @property
     def deleted_qs(self):
         """
